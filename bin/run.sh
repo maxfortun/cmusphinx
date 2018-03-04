@@ -5,7 +5,19 @@ cd $(dirname $0)
 
 ./stop.sh
 
-cd ../docker
+cd ..
+
+DEV_MIC_DIR=$(dirname "$DEV_MIC")
+[ -d "$DEV_MIC_DIR" ] || mkdir -p "$DEV_MIC_DIR"
+pushd "$DEV_MIC_DIR"
+ABS_DEV_MIC_DIR=$PWD
+popd
+DEV_MIC_NAME=$(basename $DEV_MIC)
+
+[ -d "$DEV_MIC_DIR" ] || mkdir -p "$DEV_MIC_DIR"
+[ -p "$DEV_MIC" ] || mkfifo $DEV_MIC
+
+cd docker
 
 PORTS=
 while read dockerPort; do 
@@ -20,4 +32,5 @@ done < <(grep -o 'EXPOSE[[:space:]]*[[:digit:]]*' Dockerfile|awk '{ print $2 }'|
 
 docker system prune -f
 
-docker run -itd -e container=docker --privileged --cap-add SYS_ADMIN --tmpfs /run -v /sys/fs/cgroup:/sys/fs/cgroup:ro $PORTS --name $NAME local/$NAME
+echo docker run -itd -e container=docker --privileged --cap-add SYS_ADMIN --tmpfs /run -v /sys/fs/cgroup:/sys/fs/cgroup:ro -v "$ABS_DEV_MIC_DIR:/mnt/$DEV_MIC_DIR" $PORTS --name $NAME local/$NAME
+docker run -itd -e container=docker --privileged --cap-add SYS_ADMIN --tmpfs /run -v /sys/fs/cgroup:/sys/fs/cgroup:ro -v "$ABS_DEV_MIC_DIR:/mnt/$DEV_MIC_DIR" $PORTS --name $NAME local/$NAME

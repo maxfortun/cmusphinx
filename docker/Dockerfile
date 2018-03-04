@@ -4,8 +4,6 @@ ENV	container docker
 
 COPY files /
 
-RUN sh -C /root/init/init.sh
-
 # Below is needed for ssh
 RUN yum -y install	openssh-server openssh-clients; \
 	rm /etc/ssh/ssh_host_*_key*; \
@@ -18,11 +16,10 @@ RUN yum -y install	openssh-server openssh-clients; \
 # ssh
 EXPOSE 22/tcp
 
-# openvpn
-EXPOSE 1194/tcp
-EXPOSE 1194/udp
+RUN sh -C /root/init/init.sh
 
 VOLUME [ "/sys/fs/cgroup" ]
+VOLUME [ "/mnt/host" ]
 
 CMD ["/usr/sbin/init"]
 

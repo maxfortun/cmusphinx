@@ -12,6 +12,7 @@ else
 	echo "~/.ssh/id_rsa.pub is missing. Won't be able to ssh into the container."
 fi
 
+docker image rm local/$NAME
 docker system prune -f
 docker build --rm -t local/$NAME .
 docker system prune -f

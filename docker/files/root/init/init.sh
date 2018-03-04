@@ -31,6 +31,7 @@ for p in sphinxbase sphinxtrain pocketsphinx; do
 	popd
 done
 
-
+#pocketsphinx_continuous -hmm /usr/local/share/pocketsphinx/model/en-us/en-us -lm /usr/local/share/pocketsphinx/model/en-us/en-us.lm.bin -dict /usr/local/share/pocketsphinx/model/en-us/cmudict-en-us.dict -inmic yes
+#https://stackoverflow.com/questions/43312975/record-sound-on-ubuntu-docker-image
 # https://github.com/jsalsman/featex
 
