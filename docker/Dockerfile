@@ -15,6 +15,7 @@ RUN yum -y install	openssh-server openssh-clients; \
 
 # ssh
 EXPOSE 22/tcp
+EXPOSE 3643/tcp
 
 RUN sh -C /root/init/init.sh
 

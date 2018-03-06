@@ -32,5 +32,7 @@ done < <(grep -o 'EXPOSE[[:space:]]*[[:digit:]]*' Dockerfile|awk '{ print $2 }'|
 
 docker system prune -f
 
-echo docker run -itd -e container=docker --privileged --cap-add SYS_ADMIN --tmpfs /run -v /sys/fs/cgroup:/sys/fs/cgroup:ro -v "$ABS_DEV_MIC_DIR:/mnt/$DEV_MIC_DIR" $PORTS --name $NAME local/$NAME
 docker run -itd -e container=docker --privileged --cap-add SYS_ADMIN --tmpfs /run -v /sys/fs/cgroup:/sys/fs/cgroup:ro -v "$ABS_DEV_MIC_DIR:/mnt/$DEV_MIC_DIR" $PORTS --name $NAME local/$NAME
+
+#sox -d -t raw - | socat - tcp-connect:localhost:33643
+
