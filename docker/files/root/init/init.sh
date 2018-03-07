@@ -24,7 +24,11 @@ for p in sphinxbase sphinxtrain pocketsphinx; do
 	popd
 done
 
+# on docker side
 # socat tcp-listen:3643,reuseaddr - | pocketsphinx_continuous -hmm /usr/local/share/pocketsphinx/model/en-us/en-us -lm /usr/local/share/pocketsphinx/model/en-us/en-us.lm.bin -dict /usr/local/share/pocketsphinx/model/en-us/cmudict-en-us.dict -infile /dev/stdin
+a
+# on host side
+# sox -d -c 1 -r 16k -e signed -b 16 -t wav - |  socat - tcp-connect:localhost:33643
 
 
 # https://stackoverflow.com/questions/43312975/record-sound-on-ubuntu-docker-image
