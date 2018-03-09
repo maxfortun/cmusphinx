@@ -9,6 +9,13 @@ import edu.cmu.sphinx.api.LiveSpeechRecognizer;
 import edu.cmu.sphinx.api.SpeechResult;
 import edu.cmu.sphinx.result.WordResult;
 
+import edu.cmu.sphinx.decoder.adaptation.Stats;
+import edu.cmu.sphinx.decoder.adaptation.Transform;
+import edu.cmu.sphinx.speakerid.Segment;
+import edu.cmu.sphinx.speakerid.SpeakerCluster;
+import edu.cmu.sphinx.speakerid.SpeakerIdentification;
+
+import edu.cmu.sphinx.util.TimeFrame;
 
 public class Live {	   
 
@@ -20,11 +27,20 @@ public class Live {
 		configuration.setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
 		configuration.setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.bin");
 
+		SpeakerIdentification speakerIdentification = new SpeakerIdentification();
+
 		LiveSpeechRecognizer recognizer = new LiveSpeechRecognizer(configuration);
+		Stats stats = recognizer.createStats(1);
+
+
+		SpeechResult result;
+		TimeFrame t;
 
 		recognizer.startRecognition(true);
-		SpeechResult result;
+
 		while ((result = recognizer.getResult()) != null) {
+			stats.collect(result);
+
 			System.out.format("Hypothesis: %s\n", result.getHypothesis());
 
 			System.out.println("List of recognized words and their times:");
