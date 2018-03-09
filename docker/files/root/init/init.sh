@@ -1,8 +1,15 @@
 #!/bin/bash
 # https://www.digitalocean.com/community/tutorials/how-to-install-python-3-and-set-up-a-local-programming-environment-on-centos-7
+
+# Fail on errors
 set -e
 
-cd $(dirname $0)
+
+# Set timezone 
+TZ="US/Eastern"
+ln -snf /usr/share/zoneinfo/$TZ /etc/localtime 
+echo $TZ > /etc/timezone
+
 
 #yum -y update
 yum -y install yum-utils
@@ -10,6 +17,26 @@ yum -y groupinstall development
 yum -y install python-devel
 yum -y install net-tools
 yum -y install socat
+yum -y install java-1.8.0-openjdk 
+yum -y install java-1.8.0-openjdk-devel
+yum -y install wget
+yum -y install unzip
+
+export JAVA_HOME=/usr
+
+# Install gradle
+gradle_version=4.6
+[ ! -d /opt/gradle ] && mkdir /opt/gradle
+pushd /opt/gradle
+curl -O https://services.gradle.org/distributions/gradle-${gradle_version}-all.zip
+unzip gradle-${gradle_version}
+ln -sf gradle-4.6 /opt/gradle/latest
+popd
+
+export PATH="/opt/gradle/latest/bin:$PATH"
+
+# Switch into scripts directory
+pushd $(dirname $0)
 
 # https://github.com/cmusphinx
 # http://sphinxsearch.com/downloads/
@@ -23,6 +50,11 @@ for p in sphinxbase sphinxtrain pocketsphinx; do
 	make install
 	popd
 done
+
+git clone https://github.com/cmusphinx/sphinx4.git
+pushd sphinx4
+gradle build
+popd
 
 pushd /usr/local/share/pocketsphinx/model
 
@@ -47,11 +79,13 @@ for model in *.tar; do
 	tar xvf "$model" && rm -f "$model"
 done
 
+popd
+
 # on docker side
 # socat tcp-listen:3643,reuseaddr,fork - | pocketsphinx_continuous -hmm /usr/local/share/pocketsphinx/model/en-us/en-us -lm /usr/local/share/pocketsphinx/model/en-us/en-us.lm.bin -dict /usr/local/share/pocketsphinx/model/en-us/cmudict-en-us.dict -infile /dev/stdin -logfn /var/log/pocketsphinx_continuous.log
 a
 # on host side
-# sox -d -c 1 -r 16k -e signed -b 16 -L -t wav - |  socat - tcp-connect:localhost:33643
+# sox -d -c 1 -r 16k -b 16 -L -t wav - |  socat - tcp-connect:localhost:33643
 
 
 # https://stackoverflow.com/questions/43312975/record-sound-on-ubuntu-docker-image
