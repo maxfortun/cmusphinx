@@ -35,7 +35,6 @@ public class Live {
 		configuration.setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.bin");
 
 		parseCommandLineArgs(args, configuration);
-		System.exit(1);
 
 		SpeakerIdentification speakerIdentification = new SpeakerIdentification();
 
@@ -49,6 +48,7 @@ public class Live {
 		recognizer.startRecognition(true);
 
 		while ((result = recognizer.getResult()) != null) {
+
 			stats.collect(result);
 
 			System.out.format("Hypothesis: %s\n", result.getHypothesis());
