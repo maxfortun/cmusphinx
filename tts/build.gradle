@@ -11,8 +11,18 @@ repositories {
 }
 
 dependencies {
+	compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
+	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
     compile group: 'edu.cmu.sphinx', name: 'sphinx4-core', version:'5prealpha-SNAPSHOT'
     compile group: 'edu.cmu.sphinx', name: 'sphinx4-data', version:'5prealpha-SNAPSHOT'
+}
+
+// gradle run -PappArgs="[’-l’, ‘path’, ‘-d’, ‘path’]"
+
+run {
+	if ( project.hasProperty("appArgs") ) {
+		args Eval.me(appArgs)
+	}
 }
 
 
